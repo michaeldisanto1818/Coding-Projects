@@ -1,0 +1,25 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main ()
+{
+    //initialize variables
+    unsigned int x = 0;
+    double y = 0;
+    int z = 0;
+
+    //have user input positive integer
+    cout << "Please input a positive integer: " << endl;
+    cin >> x;
+
+    //calculate bits required to express integer, also must add one to account for 2^0
+    y = log2(x) + 1;  
+
+    //assign y to z in order to truncate the decimal (i.e. 4.58496 gets truncated to 4)
+    z = y; 
+
+    cout << x << " can be represented using " << z << " bits." << endl;
+    return 0;
+
+}
