@@ -1,0 +1,151 @@
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+
+using namespace std;
+
+int main (const int argc, const char* const argv[])
+{
+    //compute and store the length of each command line argument
+    int x = strlen(argv[1]);
+    int x2 = strlen(argv[2]);
+
+    //initialize two new arrays to store each command line argument in reverse
+    char array[x] = {};
+    char array2[x2] = {};
+
+    //loop through the first CLA and store it in reverse in new array
+    for (int i = 0; i < x; i++)
+    {
+        array[i] = argv[1][(x-i)-1];
+    }
+
+    //loop through the second CLA and store it in reverse in new array
+    for (int i = 0; i < x2; i++)
+    {
+        array2[i] = argv[2][(x2-i)-1];
+    }
+    
+    //initialize new integer for the maximum length of the sum of the two CLAs 
+    int maxLength = 0;
+
+    //compute the max length of the sum (max length will be one greater than the largest of the two CLAs)
+    if (x >= x2)
+    {
+        maxLength = x + 1;
+    }
+    else if (x < x2)
+    {
+        maxLength = x2 + 1;
+    }
+
+    //initialize new array with length "maxLength" to store the sum of each character (in reverse)
+    char revsum[maxLength] = {};
+
+    //initialize integer variable to store the number in the ten's place duing addition; initialize as 0 since no number in ten's for first addition
+    int temp = 0;
+
+    //loop through each array
+    for (int i = 0; i < maxLength; i++)
+    {
+        //check if we are within the length of each array
+        if (i < x && i < x2)
+        {
+            //add the two characters together and store as an integer
+            int a = (array[i] - 48) + (array2[i] - 48);
+
+            //check if the two characters added together plus the digit in the tens place from the last addition are less than 10
+            if ((a + temp) < 10)
+            {
+                //store new integer as a character in the reverse sum array
+                char b = (a + temp) + 48;
+                revsum[i] = b;
+                //set temp to 0 since no digit in ten's place
+                temp = 0;
+            }
+            //check if the two characters added together plus the digit in the ten's place is greater than or equal to 10
+            else if ((a + temp) >= 10)
+            {
+                //store the modulus of the sum (i.e. the number in the one's place) in the reverse sum array
+                char b = ((a + temp) % 10) + 48;
+                revsum[i] = b;
+                //set temp to 1 since the digit in the ten's place is 1 (the largest number we can get in this addition will be 19, thus we can always use 1)
+                temp = 1;
+            }
+
+        }
+
+        //check if we are outside array 1 but still inside array 2
+        else if (i >= x && i < x2)
+        {
+            //store the value in array 2 as an integer
+            int a = array2[i] - 48;
+
+            //check if the value plus the ten's place value being carried over is less than 10
+            if ((a + temp) < 10)
+            {
+                //store new integer as a character in the reverse summ array
+                char b = (a + temp) + 48;
+                revsum[i] = b;
+                //set temp to 0 since no digit in ten's place
+                temp = 0;
+            }
+            //check if value plus the ten's place value being carried over is >= 10
+            else if ((a + temp) >= 10)
+            {
+                //store the modulus of the new integer (i.e. the number in the one's place) to the reverse sum array
+                char b = ((a + temp) % 10) + 48;
+                revsum[i] = b;
+                //set temp to 1 to account for the digit in the ten's place
+                temp = 1;
+            }
+        }
+
+        //check if we are outside array 2 but still inside array 1
+        else if (i < x && i >= x2)
+        {
+            //store the value in array 1 as an integer
+            int a = array[i] - 48;
+
+            //check if the value plus the ten's place value being carried over is less than 10
+            if ((a + temp) < 10)
+            {
+                //store new integer as a character in the reverse summ array
+                char b = (a + temp) + 48;
+                revsum[i] = b;
+                //set temp to 0 since no digit in ten's place
+                temp = 0;
+            }
+            //check if value plus the ten's place value being carried over is >= 10
+            else if ((a + temp) >= 10)
+            {
+                //store the modulus of the new integer (i.e. the number in the one's place) to the reverse sum array
+                char b = ((a + temp) % 10) + 48;
+                revsum[i] = b;
+                //set temp to 1 since digit in ten's place
+                temp = 1;
+            }
+        }
+
+        //check if we are outside both arrays but still have a digit (a "1") in the ten's place
+        else if (i >= x && i >= x2 && temp == 1) 
+        {
+            //store the "1" in the array and set temp to 0 since there will be no more addition (i.e. we have reached the maximum length of the sum)
+            int a = temp;
+            char b = a + 48;
+            revsum[i] = b;
+            temp = 0;
+        } 
+    }
+
+    //initialize new array to store the sum in the correct order
+    char sum[] = {};
+
+    //reverse the order of the values in the reverse sum array and print
+    for (int i = 0; i < maxLength; i++)
+    {
+        sum[i] = revsum[(maxLength - i) - 1];
+        cout << sum[i];
+    }
+
+}
