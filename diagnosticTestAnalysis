@@ -1,0 +1,130 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main () 
+{
+    //initialize variables
+    float TPR = 0;
+    float FPR = 0;
+    
+    //use to store negative values of TPR & FPR before setting them to zero to be able to exit program
+    float x = 0;
+    float y = 0;
+
+    //initialize best score
+    float best = 0;
+
+    //intialize value to store which test # had the best score
+    int besttest = 0;
+
+    //need to loop infinitely, and increment counter until expressly broken when TPR & FPR are negative
+    for (int i = 1; i < (i + 1); i++)
+    {
+        //need to repeat process of collecting TPR input until given an appropriate value, loop will continue unless expressly broken
+        while (true)
+        {
+            //prompt user for input and store data
+            cout << "Please input the True Positive Rate (TPR) of the diagnostic test: " << endl;
+            cin >> TPR;
+        
+            //check if cin is a numeric value. if not, need to clear cin and ask for input again
+            if (!cin.good())
+            {
+                cout << "Warning: invalid input to true positive rate. Please enter a numeric input." << endl;
+                cin.clear();
+
+                cin.ignore (100, '\n');
+            }
+
+            //check if value entered for TPR is greater than 1. if yes, need to clear cin and ask for input again
+            else if (TPR > 1)
+            {
+                cout << "Warning: invalid input to true positive rate. Please enter an input <=1." << endl;
+                cin.clear();
+
+                cin.ignore (100, '\n');
+            }
+
+            //check if value entered for TPR is less than 0. if yes, need to set TPR to 0, break loop, and proceed
+            else if (TPR < 0)
+            {
+                x = TPR;
+                TPR = 0;
+                break;
+            }
+
+            //if value entered for TPR is appropriate, break loop & proceed
+            else
+            {
+                break;
+            }
+
+        }
+
+        //need to repeat process of collecting TPR input until given an appropriate value, loop will continue unless expressly broken
+        while (true)
+        {
+            //prompt user for input and store data
+            cout << "Please input the False Positive Rate (FPR) of the diagnostic test: " << endl;
+            cin >> FPR;
+
+            //check if cin is a numeric value. if not, need to clear cin and ask for input again
+            if (!cin.good())
+            {
+                cout << "Warning: invalid input to false positive rate. Please enter a numeric input." << endl;
+                cin.clear();
+
+                cin.ignore (100, '\n');
+            }
+
+            //check if value entered for FPR is greater than 1. if yes, need to clear cin and ask for input again
+            else if (FPR > 1)
+            {
+                cout << "Warning: invalid input to false positive rate. Please enter an input <=1." << endl;
+                cin.clear();
+
+                cin.ignore (100, '\n');
+            }
+
+            //check if value entered for FPR is less than 0. if yes, need to set FPR to 0, break loop, and proceed
+            else if (FPR < 0)
+            {
+                y = FPR;
+                FPR = 0;
+                break;
+            }
+
+            //if value entered for FPR is appropriate, break loop & proceed
+            else
+            {
+                break;
+            }
+        }
+
+        //calculate score
+        float sTPR = 1-TPR;
+        float score = 1 - sqrt(pow(FPR,2) + pow(sTPR,2));
+
+        //check if previous score is better than new score and change values accordingly
+        if (best < score)
+        {
+            best = score;
+            besttest = i;
+        }
+
+        //exit program if both TPR and FPR are negative; upon identifying TPR && FPR < 0, need to compare all scores and output the best one
+        if (x && y < 0)
+        {
+            //print out best score before exiting program
+            cout << "Diagnostic test " << besttest << " had the best score of " << best << endl;
+            cout << "Exiting program." << endl;
+            return -1;
+        }
+
+        //print out diagnostic test score
+        cout << "The score for diagnostic test " << i << " is " << score << endl;
+
+    }
+    return 0;
+}
