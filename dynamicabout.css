@@ -68,7 +68,7 @@ nav
     background-color: black;
     padding: 10px; 
     transition: 0.4s; 
-    width: 100%;
+    width: auto;
     z-index: 99;
 }
 
