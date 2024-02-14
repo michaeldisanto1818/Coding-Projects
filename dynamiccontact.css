@@ -1,0 +1,146 @@
+/* header styling*/
+html, body{
+    height: 100%;
+    font-weight: 800;
+}
+  
+body{
+    background: black;
+    font-family: 'Poppins';
+}
+  
+svg {
+      display: block;
+      font: 7em 'Poppins';
+      width: 960px;
+      height: 300px;
+      margin: 0 auto;
+}
+  
+.text-copy {
+      fill: none;
+      stroke: white;
+      stroke-dasharray: 6% 29%;
+      stroke-width: 5px;
+      stroke-dashoffset: 0%;
+      animation: stroke-offset 5.5s infinite linear;
+}
+  
+.text-copy:nth-child(1){
+    stroke: #04189a;
+    animation-delay: -1;
+}
+  
+.text-copy:nth-child(2){
+    stroke: #1e32cd;
+    animation-delay: -2s;
+}
+  
+.text-copy:nth-child(3){
+    stroke: #1c4fd1;
+    animation-delay: -3s;
+}
+  
+.text-copy:nth-child(4){
+    stroke: #007bff;
+    animation-delay: -4s;
+}
+  
+.text-copy:nth-child(5){
+    stroke: #31a1fd;
+    animation-delay: -5s;
+}
+  
+@keyframes stroke-offset{
+    100% {stroke-dashoffset: -35%;}
+}
+
+/*nav bar styling*/
+
+nav
+{
+    position: sticky;
+    top: 0px;
+}
+
+.navBar
+{
+    background-color: black;
+    padding: 10px; 
+    transition: 0.4s; 
+    width: 100%;
+    z-index: 99;
+}
+
+.navBar a
+{
+    color: white;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 25px;
+    border-radius: 4px;
+}
+
+.navBar a:hover
+{
+    background-color: black;
+    color: #1c4fd1;
+}
+
+#left, #center, #center2, #right
+{
+    padding: 0 110px 0 110px;
+}
+
+.contact
+{
+    text-decoration: none;
+    font-family: 'Poppins';
+    color: white;
+}
+
+.contact:hover
+{
+    color:#1c4fd1;
+}
+
+.icon
+{
+    color: white;
+}
+
+.center
+{
+    text-align: center;
+    padding: 50px 0;
+    -webkit-animation: fadeIn 5s;
+    -moz-animation: fadeIn 5s;
+    -o-animation: fadeIn 5s;
+    -ms-animation: fadeIn 5s;
+}
+  
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @-moz-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @-webkit-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @-o-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @-ms-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
