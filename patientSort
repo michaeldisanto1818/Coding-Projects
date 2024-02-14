@@ -1,0 +1,572 @@
+#include <iostream>
+#include <cstring> // required for string manipulation
+#include <iomanip> // required for tabular output
+#include <fstream>
+
+using namespace std; 
+const int NUM_PATIENTS = 10; // 10 patients will be included, this value cannot be modified
+const int MAX_NAME_LENGTH = 10; // no names longer than 10 characters, this value cannot be modified
+
+// PART 1A: Create the data struct
+struct patientInfo
+{
+    int age;
+    int id;
+    char firstName[MAX_NAME_LENGTH] = {};
+    char lastName[MAX_NAME_LENGTH] = {};
+    char sex;
+};
+
+//initialize array to store patient specific info in order
+patientInfo record[NUM_PATIENTS]= {};
+
+//initialize function to output data in tabular format
+void printData(patientInfo record[NUM_PATIENTS]);
+
+//initialize function to swap data when sorting by Age, ID, and Sex
+void swapData(patientInfo record[NUM_PATIENTS], char fswap[NUM_PATIENTS][MAX_NAME_LENGTH], char lswap [NUM_PATIENTS][MAX_NAME_LENGTH], int k);
+
+//initialize function to swap data when sorting by First Name
+void swapDataFN(patientInfo record[NUM_PATIENTS], char fswap[NUM_PATIENTS][MAX_NAME_LENGTH], char lswap [NUM_PATIENTS][MAX_NAME_LENGTH], int k);
+
+//initialize function to swap data when sorting by Last Name
+void swapDataLN(patientInfo record[NUM_PATIENTS], char fswap[NUM_PATIENTS][MAX_NAME_LENGTH], char lswap [NUM_PATIENTS][MAX_NAME_LENGTH], int k);
+
+int main()
+{
+
+    // PART 1B: Read the patient record
+
+    //open .txt file
+    ifstream input("patientInfo.txt");
+
+    //read file values into record array
+    for (int i = 0; i < NUM_PATIENTS; i++)
+    {
+        input >> record[i].age >> record[i].id >> record[i].firstName >> record[i].lastName >> record[i].sex;
+    };
+
+    input.close();
+    
+    // PART 2: Select a primary sorting category from user input
+
+    //names of primary sorting categories
+    char strage[] = "Age";
+    char strid[] = "ID";
+    char strsex[] = "Sex";
+    char strfirst[] = "First";
+    char strlast[] = "Last";
+
+    //initialize array to store user input
+    char strin[6] = {};
+
+    //Ask user for string input to determine sorting category
+    cout << "Please input a category to sort patient records by." << endl;
+    cout << "Options (case sensitive) are Age, ID, First, Last, Sex: " << endl;
+
+    //load string from keyboard input
+    char x = cin.get();
+        int i = 0;
+        while (x != '\n' && i < 5)
+        {
+            strin[i] = x;
+            i++;
+            x = cin.get();
+        }
+        //ensure we have a null terminator for the string
+        strin[i] = 0;
+    
+    //check if string is not the same as any of the primary sorting categories
+    if (strcmp(strage,strin) != 0 && strcmp(strid,strin) != 0 && strcmp(strfirst,strin) != 0 && strcmp(strlast,strin) != 0 && strcmp(strsex,strin) != 0)
+    {    
+        //prompt user for input again & load keyboard input; do this until we receive a valid input
+        do
+        {
+            cout << "Unepxected input. Please input either Age, ID, First, Last, or Sex: ";
+            char x = cin.get();
+            int i = 0;
+            while (x != '\n' && i < 5)
+            {
+                strin[i] = x;
+                i++;
+                x = cin.get();
+            }
+            strin[i] = 0;
+
+        } while (strcmp(strage,strin) != 0 && strcmp(strid,strin) != 0 && strcmp(strfirst,strin) != 0 && strcmp(strlast,strin) != 0 && strcmp(strsex,strin) != 0);
+    }
+
+    cout << endl;
+
+    //initialize array to store temporary values when swapping first names
+    char fswap[NUM_PATIENTS][MAX_NAME_LENGTH] = {};
+
+    //initialize array to store temporary values when swapping last names
+    char lswap[NUM_PATIENTS][MAX_NAME_LENGTH] = {};
+
+    //check if keyboard input was "Age"; sort by Age
+    if(strcmp(strage,strin) == 0)
+    {
+        cout << "Case 1, sorting by Age.";
+
+        //sort using bubble sort
+        for (int i = 0; i < NUM_PATIENTS - 1; i++)
+        {
+            for (int k = 0; k < NUM_PATIENTS - i - 1; k++)
+            {
+
+                //check if record[k].age is larger than record[k+1].age
+                if (record[k].age > record[k+1].age)
+                {
+                    //swap the data of the two records
+                    swapData(record, fswap, lswap, k);
+                }
+            }
+        }
+
+        //sort using bubble sort
+        for (int i = 0; i < NUM_PATIENTS - 1; i++)
+        {
+            for (int k = 0; k < NUM_PATIENTS - i - 1; k++)
+            {
+
+                //Check if there are any ties in age
+                if (record[k].age == record[k+1].age)
+                {
+                    //swap data; sorting based on first name (alphabetical order)
+                    swapDataFN(record, fswap, lswap, k);
+                }
+            }
+        }
+
+        //output sorted data in tabular format
+        printData(record);
+
+    }
+
+    //check if keyboard input was "ID"; sort by ID  
+    else if(strcmp(strid,strin) == 0)
+    {
+        cout << "Case 2, sorting by ID."; 
+
+        //sort using bubble sort
+        for (int i = 0; i < NUM_PATIENTS - 1; i++)
+        {
+            for (int k = 0; k < NUM_PATIENTS - i - 1; k++)
+            {
+                
+                //check if record[k].id is larger than record[k+1].id
+                if (record[k].id > record[k+1].id)
+                {
+                    //swap the data of the two records
+                    swapData(record, fswap, lswap, k);
+                }
+            }
+        }
+
+        //no need for tiebreaker by first name since every id is different
+        //output sorted data in tabular format
+        printData(record);
+    }
+
+    //check if keyboard input was "First"; sort by First Name    
+    else if(strcmp(strfirst,strin) == 0)
+    {
+        cout << "Case 3, sorting by First Name.";
+
+        //sort using bubble sort
+        for (int i = 0; i < NUM_PATIENTS - 1; i++)
+        {
+            for (int k = 0; k < NUM_PATIENTS - i - 1; k++)
+            {
+                //swap data; sorting based on first name (alphabetical order)
+                swapDataFN(record, fswap, lswap, k);
+            }
+        }
+
+        //output sorted data in tabular format
+        printData(record);
+    }
+    
+    //check if keyboard input was "Last"; sort by Last Name
+    else if(strcmp(strlast,strin) == 0)
+    {
+        cout << "Case 4, sorting by Last Name.";
+        
+        //sort using bubble sort
+        for (int i = 0; i < NUM_PATIENTS - 1; i++)
+        {
+            for (int k = 0; k < NUM_PATIENTS - i - 1; k++)
+            {
+                //swap data; sorting based on last name (alphabetical order)
+                swapDataLN(record, fswap, lswap, k);
+            }
+        }
+
+        //output sorted data in tabular format
+        printData(record);
+    }
+      
+    //check if keyboard input was "Sex"; sort by Sex  
+    else if(strcmp(strsex,strin) == 0)
+    {
+        cout << "Case 5, sorting by Sex.";
+
+        //initialize new array to aid in sort f & m
+        int sCheck[NUM_PATIENTS] = {};
+
+        //assign 0 for f, 1 for m; ensures that we can simply check which number is bigger to sort through f and m
+        for (int i = 0; i < NUM_PATIENTS; i++)
+        {
+            if (record[i].sex == 'f')
+            {
+                sCheck[i] = 0;
+            }
+            else if (record[i].sex == 'm')
+            {
+                sCheck[i] = 1;
+            }
+        }
+
+        //sort using bubble sort
+        for (int i = 0; i < NUM_PATIENTS - 1; i++)
+        {
+            for (int k = 0; k < NUM_PATIENTS - i - 1; k++)
+            {
+
+                //check if there is an 'm' before an 'f' (record[k].sex > record[k+1].sex)
+                if (sCheck[k] > sCheck[k+1])
+                {
+                    //swap the values in the integer array
+                    int temp = sCheck[k+1];
+                    sCheck[k+1] = sCheck[k];
+                    sCheck[k] = temp;
+
+                    //swap the data of the two corresponding records
+                    swapData(record, fswap, lswap, k);
+                }
+            }
+        }
+
+        //sort using bubble sort
+        for (int i = 0; i < NUM_PATIENTS - 1; i++)
+        {
+            for (int k = 0; k < NUM_PATIENTS - i - 1; k++)
+            {
+
+                //Check if there are any ties in sex (i.e. an 'f' beside an 'f' or an 'm' beside an 'm')
+                if (sCheck[k] == sCheck[k+1])
+                {
+                    //swap data; sorting based on first name (alphabetical order)
+                    swapDataFN(record, fswap, lswap, k);
+                }
+            }
+        }
+
+        //output the sorted data in tabluar format
+        printData(record);
+    }
+
+    return 0;
+}
+
+//function to print data in tabular format
+void printData(patientInfo record[NUM_PATIENTS])
+{
+    //align & print "Age: "
+    cout << endl << setw(12) << "Age: ";
+        
+        // align & print each value for Age
+        for (int i = 0; i < NUM_PATIENTS; i++)
+        {
+            cout << setw(10) << record[i].age;
+        }
+
+        //align & print "ID"
+        cout << endl << setw(12) << "ID: ";
+
+        //align & print each value for ID
+        for (int i = 0; i < NUM_PATIENTS; i++)
+        {
+            cout << setw(10) << record[i].id;
+        }
+
+        //align & print "First Name: ""
+        cout << endl << setw(10) << "First Name: ";
+
+        //align & print out all first names
+        for (int i = 0; i < NUM_PATIENTS; i++)
+        {
+            cout << setw(10) << record[i].firstName;
+        }
+
+        //align & print "Last Name: "
+        cout << endl << setw(12) << "Last Name: ";
+
+        //align & print out all last names
+        for (int i = 0; i < NUM_PATIENTS; i++)
+        {
+            cout << setw(10) << record[i].lastName;
+        }
+
+        //align & print "Sex: "
+        cout << endl << setw(12) << "Sex: ";
+
+        //align & print each value for Sex
+        for (int i = 0; i < NUM_PATIENTS; i++)
+        {
+            cout << setw(10) << record[i].sex;
+        }
+
+        cout << endl;
+}
+
+//Function to swap data when sorting by Age, ID, and Sex
+void swapData(patientInfo record[NUM_PATIENTS], char fswap[NUM_PATIENTS][MAX_NAME_LENGTH], char lswap [NUM_PATIENTS][MAX_NAME_LENGTH], int k)
+{
+    //swap record[k].age and record[k+1].age
+    int ageT = record[k+1].age;
+    record[k+1].age = record[k].age;
+    record[k].age = ageT;
+
+    //swap record[k].id and record[k+1].id
+    int idT = record[k+1].id;
+    record[k+1].id = record[k].id;
+    record[k].id = idT;
+
+    //swap record[k].sex and record[k+1].sex
+    char sexT = record[k+1].sex;
+    record[k+1].sex = record[k].sex;
+    record[k].sex = sexT;
+
+    //loop thru each character in record[k].firstName and record[k+1].firstName
+    for (int n = 0; n < MAX_NAME_LENGTH; n++)
+    {
+        //swap the characters
+        fswap[k][n] = record[k+1].firstName[n];
+        record[k+1].firstName[n] = record[k].firstName[n];
+        record[k].firstName[n] = fswap[k][n];
+    }
+
+    //loop thru each character in record[k].lastName and record[k+1].lastName
+    for (int n = 0; n < MAX_NAME_LENGTH; n++)
+    {
+        //swap the characters
+        lswap[k][n] = record[k+1].lastName[n];
+        record[k+1].lastName[n] = record[k].lastName[n];
+        record[k].lastName[n] = lswap[k][n];
+    }
+}
+
+//function to swap data when sorting by First Name
+void swapDataFN(patientInfo record[NUM_PATIENTS], char fswap[NUM_PATIENTS][MAX_NAME_LENGTH], char lswap [NUM_PATIENTS][MAX_NAME_LENGTH], int k)
+{
+    //convert the first characters in record[k].firstName and record[k+1].firstName to integer values (i.e. their ASCII values)
+    char a = record[k].firstName[0];
+    int x = a;
+    char b = record[k+1].firstName[0];
+    int y = b;
+
+    //check if ASCII value for record[k].firstName[0] is greater than ASCII value for record[k+1].firstName[0], and that the two characters are not both null terminators
+    if (x > y && x != 0 && y != 0)
+    {
+        //swap the data of the two records
+        swapData(record, fswap, lswap, k);
+    }
+
+    //repeat process for every letter the two arrays provided: 1. no swap occurs, 2. the previous two characters were the same, and 3. the two characters are not both null terminators
+    char c = record[k].firstName[1];
+    int x2 = c;
+    char d = record[k+1].firstName[1];
+    int y2 = d;
+                
+    if (x == y && x2 > y2 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char e = record[k].firstName[2];
+    int x3 = e;
+    char f = record[k+1].firstName[2];
+    int y3 = f;
+                
+    if (x == y && x2 == y2 && x3 > y3 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char g = record[k].firstName[3];
+    int x4 = g;
+    char h = record[k+1].firstName[3];
+    int y4 = h;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 > y4 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char i = record[k].firstName[4];
+    int x5 = i;
+    char j = record[k+1].firstName[4];
+    int y5 = j;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 > y5 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char z = record[k].firstName[5];
+    int x6 = z;
+    char l = record[k+1].firstName[5];
+    int y6 = l;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 > y6 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char m = record[k].firstName[6];
+    int x7 = m;
+    char n = record[k+1].firstName[6];
+    int y7 = n;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 == y6 && x7 > y7 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char o = record[k].firstName[7];
+    int x8 = o;
+    char p = record[k+1].firstName[7];
+    int y8 = p;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 == y6 && x7 == y7 && x8 > y8 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char q = record[k].firstName[8];
+    int x9 = q;
+    char r = record[k+1].firstName[8];
+    int y9 = r;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 == y6 && x7 == y7 && x8 == y8 && x9 > y9 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char s = record[k].firstName[9];
+    int x10 = s;
+    char t = record[k+1].firstName[9];
+    int y10 = t;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 == y6 && x7 == y7 && x8 == y8 && x9 == y9 && x10 > y10 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+}
+
+//function to swap data when sorting by Last Name
+//same as swapDataFN function but using record[k].lastName instead of record[k].firstName
+void swapDataLN(patientInfo record[NUM_PATIENTS], char fswap[NUM_PATIENTS][MAX_NAME_LENGTH], char lswap [NUM_PATIENTS][MAX_NAME_LENGTH], int k)
+{
+    char a = record[k].lastName[0];
+    int x = a;
+    char b = record[k+1].lastName[0];
+    int y = b;
+
+    if (x > y && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char c = record[k].lastName[1];
+    int x2 = c;
+    char d = record[k+1].lastName[1];
+    int y2 = d;
+                
+    if (x == y && x2 > y2 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char e = record[k].lastName[2];
+    int x3 = e;
+    char f = record[k+1].lastName[2];
+    int y3 = f;
+                
+    if (x == y && x2 == y2 && x3 > y3 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char g = record[k].lastName[3];
+    int x4 = g;
+    char h = record[k+1].lastName[3];
+    int y4 = h;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 > y4 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char i = record[k].lastName[4];
+    int x5 = i;
+    char j = record[k+1].lastName[4];
+    int y5 = j;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 > y5 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char z = record[k].lastName[5];
+    int x6 = z;
+    char l = record[k+1].lastName[5];
+    int y6 = l;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 > y6 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char m = record[k].lastName[6];
+    int x7 = m;
+    char n = record[k+1].lastName[6];
+    int y7 = n;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 == y6 && x7 > y7 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char o = record[k].lastName[7];
+    int x8 = o;
+    char p = record[k+1].lastName[7];
+    int y8 = p;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 == y6 && x7 == y7 && x8 > y8 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char q = record[k].lastName[8];
+    int x9 = q;
+    char r = record[k+1].lastName[8];
+    int y9 = r;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 == y6 && x7 == y7 && x8 == y8 && x9 > y9 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+
+    char s = record[k].lastName[9];
+    int x10 = s;
+    char t = record[k+1].lastName[9];
+    int y10 = t;
+                
+    if (x == y && x2 == y2 && x3 == y3 && x4 == y4 && x5 == y5 && x6 == y6 && x7 == y7 && x8 == y8 && x9 == y9 && x10 > y10 && x != 0 && y != 0)
+    {
+        swapData(record, fswap, lswap, k);
+    }
+}
